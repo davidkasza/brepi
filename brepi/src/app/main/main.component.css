@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 800px;
+}
+
+.beer-card {
+    flex: 0 0 calc(33.33% - 10px);
+    margin: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.beer-image {
+  max-width: 100%;
+  max-height: 150px;
+  margin-top: 10px;
+}
+
+button {
+    border: none;
+}

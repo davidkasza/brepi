@@ -1,0 +1,17 @@
+<div class="container">
+  <div
+    *ngFor="let beer of beers.slice(0, 6); let i = index"
+    class="beer-card"
+    (click)="descriptionTrigger(i)"
+  >
+    
+    <img
+      [src]="beer.imageUrl"
+      alt="{{ beer.name }} Image"
+      class="beer-image"
+      *ngIf="!beer.showDescription"
+    />
+    <p *ngIf="beer.showDescription">{{ beer.description }}</p>
+    <h3>{{ beer.name }}</h3>
+  </div>
+</div>
