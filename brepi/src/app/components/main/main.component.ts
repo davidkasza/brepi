@@ -42,18 +42,8 @@ export class MainComponent {
       }
       beers.push(beer);
     }
-
-    for (let i = 0; i < 6; i++) {
-      this.renderBeerDatas(beers[i]);
-    }
-
+    
     return this.beers;
-  }
-
-  renderBeerDatas(beer) {
-    this.name = beer.name;
-    this.imageUrl = beer.image_url;
-    this.description = beer.description;
   }
 
   descriptionTrigger(index: number): void {
