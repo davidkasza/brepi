@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { MainComponent } from './components/main/main.component';
-import { PaginatorComponent } from './components/paginator/paginator.component';
+import { BeerPaginationComponent } from './components/paginator/paginator.component';
 
 import { ApiService } from './services/api.service';
 
@@ -14,7 +14,7 @@ import { ApiService } from './services/api.service';
     AppComponent,
     NavbarComponent,
     MainComponent,
-    PaginatorComponent
+    BeerPaginationComponent
   ],
   imports: [
     BrowserModule,

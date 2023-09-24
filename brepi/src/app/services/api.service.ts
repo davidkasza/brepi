@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 
 export class ApiService {
-    private apiUrl = 'https://api.punkapi.com/v2/beers?page=1&per_page=6';
+  private apiUrl = 'https://api.punkapi.com/v2/beers';
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    getBeers(): Observable<any> {
-        const url = `${this.apiUrl}`;
-        return this.http.get(url);
-    }
+  getBeers(page: number, perPage: number): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('per_page', perPage.toString());
+    return this.http.get(this.apiUrl, { params });
+  }
 }
