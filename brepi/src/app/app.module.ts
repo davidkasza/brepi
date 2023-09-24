@@ -7,7 +7,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { MainComponent } from './components/main/main.component';
 import { BeerPaginationComponent } from './components/paginator/paginator.component';
 
-import { ApiService } from './services/api.service';
+import { BeerService } from './services/api.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import { ApiService } from './services/api.service';
     BrowserModule,
     HttpClientModule
   ],
-  providers: [ApiService],
+  providers: [BeerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,20 +1,23 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-} from '@angular/core';
-import { ApiService } from '../../services/api.service';
+import { Component } from '@angular/core';
+import { BeerService } from '../../services/api.service';
 
 @Component({
   selector: 'app-main',
-  //changeDetection: ChangeDetectionStrategy.OnPush, //if its with OnPush, it does not load at the first time we open the webpage
-  changeDetection: ChangeDetectionStrategy.Default,
   template: `
-    <div class="container">
+    <div class="container mt-4">
+      <beer-pagination
+        class="beer-pagination"
+        [offset]="offset"
+        [listLength]="listLength"
+        [total]="total"
+        (nextEvent)="getNextPage()"
+        (prevEvent)="getPrevPage()"
+      ></beer-pagination>
       <div
         *ngFor="let beer of beers; let i = index"
         class="beer-card"
-        (click)="descriptionTrigger(i)"
+        (mouseenter)="descriptionTrigger(i)"
+        (mouseleave)="descriptionTrigger(i)"
       >
         <img
           [src]="beer.imageUrl"
@@ -25,18 +28,10 @@ import { ApiService } from '../../services/api.service';
         <p *ngIf="beer.showDescription">{{ beer.description }}</p>
         <h3>{{ beer.name }}</h3>
       </div>
-      <beer-pagination class="beer-paginator"
-        [offset]="offset"
-        [listLength]="listLength"
-        [total]="total"
-        (nextEvent)="getNextPage()"
-        (prevEvent)="getPrevPage()"
-      ></beer-pagination>
     </div>
   `,
   styleUrls: ['./main.component.css'],
 })
-
 export class MainComponent {
   beers = [];
   name: string;
@@ -47,42 +42,30 @@ export class MainComponent {
   offset = 1;
   total = 10;
   listLength = 6;
-  currentPageData = [];
+
+  from: number = 0;
+  to: number = 6;
 
   data: any;
 
-  constructor(
-    private apiService: ApiService,
-    private cdref: ChangeDetectorRef
-  ) {}
+  constructor(private beerService: BeerService) {}
 
-  getBeers() {
-    this.apiService.getBeers(this.offset, this.listLength).subscribe(
-      (data: any) => {
-        this.beers = this.readBeerData(data);
-        console.log(this.beers);
-      },
-      (error) => {
-        console.error('Error fetching beer data:', error);
-      }
+  async getBeers() {
+    const data = await this.beerService.getBeers(
+      1,
+      this.total * this.listLength
     );
+    this.data = data;
+    this.beers = this.readBeerData(data);
   }
 
   ngOnInit() {
     this.getBeers();
   }
 
-  ngOnChanges(): void {
-    //for some reason it never runs
-    console.log('current value of the offset: ' + this.offset);
-
-    this.getBeers();
-    this.cdref.markForCheck();
-  }
-
   readBeerData(data) {
     this.beers = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = this.from; i < this.to; i++) {
       const beer = {
         name: data[i].name,
         imageUrl: data[i].image_url,
@@ -91,7 +74,6 @@ export class MainComponent {
       };
       this.beers.push(beer);
     }
-
     return this.beers;
   }
 
@@ -101,13 +83,15 @@ export class MainComponent {
 
   getNextPage(): void {
     this.offset++;
-    this.getBeers();
-    this.cdref.markForCheck();
+    this.from = (this.offset - 1) * this.listLength;
+    this.to = this.offset * this.listLength;
+    this.readBeerData(this.data);
   }
 
   getPrevPage(): void {
+    this.to = (this.offset - 1) * this.listLength;
     this.offset--;
-    this.getBeers();
-    this.cdref.markForCheck();
+    this.from = (this.offset - 1) * this.listLength;
+    this.readBeerData(this.data);
   }
 }
