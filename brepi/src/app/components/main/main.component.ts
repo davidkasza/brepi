@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BeerService } from '../../services/api.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-main',
@@ -12,6 +13,7 @@ import { BeerService } from '../../services/api.service';
         [total]="total"
         (nextEvent)="getNextPage()"
         (prevEvent)="getPrevPage()"
+        (getPageEvent)="getPage()"
       ></beer-pagination>
       <div
         *ngFor="let beer of beers; let i = index"
@@ -48,7 +50,10 @@ export class MainComponent {
 
   data: any;
 
-  constructor(private beerService: BeerService) {}
+  constructor(
+    private beerService: BeerService,
+    private sharedService: SharedService
+  ) {}
 
   async getBeers() {
     const data = await this.beerService.getBeers(
@@ -82,16 +87,35 @@ export class MainComponent {
   }
 
   getNextPage(): void {
-    this.offset++;
+    if (this.offset < this.total) {
+      this.offset++;
+      this.from = (this.offset - 1) * this.listLength;
+      this.to = this.offset * this.listLength;
+    } else {
+      this.offset = 1;
+    }
     this.from = (this.offset - 1) * this.listLength;
     this.to = this.offset * this.listLength;
     this.readBeerData(this.data);
   }
 
   getPrevPage(): void {
-    this.to = (this.offset - 1) * this.listLength;
-    this.offset--;
+    if (this.offset == 1) {
+      this.offset = this.total;
+      this.from = (this.offset - 1) * this.listLength;
+      this.to = this.offset * this.listLength;
+    } else {
+      this.to = (this.offset - 1) * this.listLength;
+      this.offset--;
+      this.from = (this.offset - 1) * this.listLength;
+    }
+    this.readBeerData(this.data);
+  }
+
+  getPage(): void {
+    this.offset = this.sharedService.getDesiredPage();
     this.from = (this.offset - 1) * this.listLength;
+    this.to = this.offset * this.listLength;
     this.readBeerData(this.data);
   }
 }
